@@ -58,7 +58,7 @@
         
         function Init()
         {
-            $this->_APIKEY = ""; //Insert API-Key you can get from ustream here. http://developers.soundcloud.com/
+            $this->_APIKEY = ""; //Insert API-Key you can get from ustream here. http://developer.ustream.tv/
         }
         /**
         * Returns the current APIKey
