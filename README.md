@@ -4,12 +4,15 @@ PHPUstreamRip
 PHP code to generate a rtmpdump command with all required parameters to rip Ustream streams.
 
 Usage:
+
     Coming Soon
 
 Todo:
+
     Coming Soon
 
 Legal notice:
+
     This script generates a command that can be used to record online broadcasts, including
     copyrighted material. Some countries forbid recording of copyrighted material so using
     this script can be illegal in your country. Using this script is up to you, i take no
