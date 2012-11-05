@@ -43,6 +43,8 @@
         var $ustreamHost = "www.ustream.tv";
         var $ustreamPath = "/channel/";
         var $ustreamAPIHost = "http://api.ustream.tv";
+        var $rtmpDumpPath;
+        var $outpuPath;
         var $amfData;
         var $rtmpData;
         var $amfObject;
@@ -52,41 +54,35 @@
         var $command;
         var $status;
         
-        function Ustreamrip()
+        function Ustreamrip($properties = array())
         {
+            foreach($properties as $propertyKey => $propertyValue)
+            {
+                $this->__set($propertyKey,$propertyValue);
+            }
+        }
+        
+        function __get($property)
+        {
+            if(property_exists($this,$property))
+            {
+                return $this->$property;
+            }
+        }
+        
+        function __set($property,$value)
+        {
+            if(property_exists($this,$property))
+            {
+                $this->$property = $value;
+            }
         }
         
         function Init()
         {
-            $this->_APIKEY = ""; //Insert API-Key you can get from ustream here. http://developer.ustream.tv/
-        }
-        /**
-        * Returns the current APIKey
-        * 
-        */
-        function getAPIKey()
-        {
-            return $this->_APIKEY;
-        }
-        
-        /**
-        * No need to use this function unless you use multiple keys.
-        * 
-        * @param string $key
-        */
-        function setAPIKey($key)
-        {
-            $this->_APIKEY = $key;
-        }
-        
-        function setChannel($channel)
-        {
-            $this->_CHANNEL = $channel;
-        }
-        
-        function getChannel()
-        {
-            return $this->_CHANNEL;
+            $this->__set('_APIKEY', ''); // Insert API-Key you can get from ustream here. http://developer.ustream.tv/
+            $this->__set('rtmpDumpPath', ''); // it's safe to leave this empty if the command is executed in the same directory as RTMPDump
+            $this->__set('outputPath', 'c:/dump/'); // Leaving this empty will save the output file in current directory
         }
         
         /**
@@ -125,13 +121,10 @@
             $req = $verb .' '. $uri . $getdata_str .' HTTP/1.1' . $crlf;
             $req .= 'Host: '. $ip . $crlf;
             $req .= 'User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.7 (KHTML, like Gecko) RockMelt/0.16.91.478 Chrome/16.0.912.77 Safari/535.7' . $crlf;
-//            $req .= 'User-Agent: Mozilla/5.0 Firefox/3.6.12' . $crlf;
             $req .= 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' . $crlf;
             $req .= 'Accept-Language: en-us,en;q=0.5' . $crlf;
             $req .= 'Accept-Encoding: deflate' . $crlf;
             $req .= 'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7' . $crlf;
-            
-            var_dump($req);die();
 
             foreach ($custom_headers as $k => $v)
                 $req .= $k .': '. $v . $crlf;
@@ -170,10 +163,9 @@
             $request =  $this->ustreamAPIHost;
             $format = 'php';   // this can be xml, json, html, or php. Keep it on php unless you like to hack.
             $args = 'subject=channel';
-            $args .= "&uid=".$this->_CHANNEL;
+            $args .= '&uid='.$this->__get('_CHANNEL');
             $args .= '&command=getInfo';
-            $args .= '&key='.$this->_APIKEY; 
-            var_dump($args);die();
+            $args .= '&key='.$this->_APIKEY;
             $session = curl_init($request.'/'.$format.'?'.$args);
             curl_setopt($session, CURLOPT_HEADER, false);
             curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
@@ -182,10 +174,10 @@
             curl_close($session);
 
             $resultsArray = unserialize($response);
-            $this->channelData = $resultsArray;
-            $this->channelID = $resultsArray['results']['id'];
-            $this->userID = $resultsArray['results']['user']['id'];
-            $this->status = $resultsArray['results']['status'];
+            $this->__set('channelData', $resultsArray);
+            $this->__set('channelID', $resultsArray['results']['id']);
+            $this->__set('userID', $resultsArray['results']['user']['id']);
+            $this->__set('userID', $resultsArray['results']['status']);
         }
         
         function getChannelStatus()
@@ -227,6 +219,8 @@
             $deserializer->deserialize($amf);
             $this->amfData = $deserializer->amfdata->_bodys;
             $this->amfData = $this->amfData[0];
+            $this->status = $this->amfData->_value['status'];
+            //var_dump($this->amfData,$this->status);die();
 
             if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['fmsUrl']))
             {
@@ -257,6 +251,7 @@
             }
             else
             {
+                var_dump($this->status,$this->amfData);
                 var_dump("UNKNOWN ERROR");
             }
         }
@@ -287,7 +282,7 @@
             $this->getRTMP();
             $this->command = array();
             for($i=0;$i<count($this->rtmpData);$i++)
-                $this->command[] = "rtmpdump -v -r ".$this->rtmpData[$i][0]." -a \"".$this->rtmpData[$i][2]."\" -f \"WIN 11,0,1,152\" -y \"".$this->rtmpData[$i][1]."\" -s \"http://static-cdn1.ustream.tv/swf/live/viewer.rsl:249.swf\" -o \"C:\\dump\\".$this->_CHANNEL.".flv\"";
+                $this->command[] = $this->rtmpDumpPath."rtmpdump -v -r ".$this->rtmpData[$i][0]." -a \"".$this->rtmpData[$i][2]."\" -f \"WIN 11,0,1,152\" -y \"".$this->rtmpData[$i][1]."\" -s \"http://static-cdn1.ustream.tv/swf/live/viewer.rsl:249.swf\" -o \"".$this->outpuPath.$this->_CHANNEL.".flv\"";
             
             return $this->command;
         }
