@@ -1,7 +1,4 @@
 <?php
-  
-?>
-<?php
 /** 
  * The class ustreamrip.class.php 
  *  
@@ -12,9 +9,12 @@
  * personal usage.
  *  
  * @package Ustreamrip
- * @author Oguzhan Uysal <info@yu-go.eu>
+ * @author PBX_g33k <info@yu-go.eu>
  * @version 0.1.0
- * @todo 
+ * @todo Support for short and long URIs
+ * @todo Add logging
+ * @todo Add better error handling
+ * @todo Add caching support (flat-file or database ((My)SQL(ite)))
  *  
  * History: 
  *     2012-07-XX: first public version
@@ -22,18 +22,9 @@
  *                 updated getRTMP to support ustream's new amf format
  *                 added support for multiple rtmp uris
  *     2008-XX-XX: initial version 
- *                 Never published, run on nopan.web2sms.nl
+ *                 Never published, ran on nopan.web2sms.nl
  */
- 
- /*
- * 
- * TODO:
- * 
- * Add error codes
- * Add logging
- * Add caching support (flat-file or database)
- */
- 
+  
  /*
  *
  *  NOTE:
