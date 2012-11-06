@@ -6,7 +6,7 @@
         <meta http-equiv="Cache-Control" content="no-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta http-equiv="Lang" content="en">
-        <meta name="author" content="Oguzhan Uysal">
+        <meta name="author" content="PBX_g33k">
         <meta http-equiv="Reply-to" content="info@yu-go.eu">
         <meta name="description" content="Small script that makes it possible for the end-user to record live streams from the ustream network. Usage of this script is questionable in some jurisdictions.">
         <meta name="keywords" content="">

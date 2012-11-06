@@ -80,9 +80,9 @@
         
         function Init()
         {
-            $this->__set('_APIKEY', ''); // Insert API-Key you can get from ustream here. http://developer.ustream.tv/
-            $this->__set('rtmpDumpPath', ''); // it's safe to leave this empty if the command is executed in the same directory as RTMPDump
-            $this->__set('outputPath', 'c:/dump/'); // Leaving this empty will save the output file in current directory
+            $this->__set('rtmpDumpPath', ''); 
+            $this->__set('outputPath', 'c:/dump/');
+            //$this->__set('_APIKEY', '') //Insert API-Key you can get from ustream here. http://developer.ustream.tv/
         }
         
         /**
@@ -160,6 +160,7 @@
         }
          
         function getuStreamInfo(){
+            $this->processChannelName();
             $request =  $this->ustreamAPIHost;
             $format = 'php';   // this can be xml, json, html, or php. Keep it on php unless you like to hack.
             $args = 'subject=channel';
@@ -220,7 +221,6 @@
             $this->amfData = $deserializer->amfdata->_bodys;
             $this->amfData = $this->amfData[0];
             $this->status = $this->amfData->_value['status'];
-            //var_dump($this->amfData,$this->status);die();
 
             if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['fmsUrl']))
             {
@@ -247,7 +247,7 @@
             }
             elseif($this->status == "offline")
             {
-                var_dump("CHANNEL OFFLINE!!!");
+                var_dump($this->__get('_CHANNEL'),"CHANNEL OFFLINE!!!");
             }
             else
             {
@@ -282,9 +282,16 @@
             $this->getRTMP();
             $this->command = array();
             for($i=0;$i<count($this->rtmpData);$i++)
-                $this->command[] = $this->rtmpDumpPath."rtmpdump -v -r ".$this->rtmpData[$i][0]." -a \"".$this->rtmpData[$i][2]."\" -f \"WIN 11,0,1,152\" -y \"".$this->rtmpData[$i][1]."\" -s \"http://static-cdn1.ustream.tv/swf/live/viewer.rsl:249.swf\" -o \"".$this->outpuPath.$this->_CHANNEL.".flv\"";
+                $this->command[] = $this->rtmpDumpPath."rtmpdump -v -r ".$this->rtmpData[$i][0]." -a \"".$this->rtmpData[$i][2]."\" -f \"WIN 11,0,1,152\" -y \"".$this->rtmpData[$i][1]."\" -s \"http://static-cdn1.ustream.tv/swf/live/vieweri.rsl:249.swf\" -o \"".$this->outpuPath.$this->_CHANNEL.".flv\"";
             
             return $this->command;
+        }
+        
+        function processChannelName()
+        {
+            $uris = explode('/',$this->__get('_CHANNEL'));
+            $amount = count($uris);
+            $this->__set('_CHANNEL',$uris[$amount-1]);
         }
         
         function getRTMPCommandSingle(){
