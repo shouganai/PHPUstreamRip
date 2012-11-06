@@ -17,12 +17,15 @@
  * @todo Add caching support (flat-file or database ((My)SQL(ite)))
  *  
  * History: 
- *     2012-07-XX: first public version
- *                 rewrote major parts for OOP approach
- *                 updated getRTMP to support ustream's new amf format
- *                 added support for multiple rtmp uris
- *     2008-XX-XX: initial version 
- *                 Never published, ran on nopan.web2sms.nl
+ *      2012-11-06: improved URI handling. Now works with full URIs also
+ *      2012-11-05: first commit to GitHub
+ *                  replaced getters and setters with magic methods
+ *      2012-07-XX: first public version
+ *                  rewrote major parts for OOP approach
+ *                  updated getRTMP to support ustream's new amf format
+ *                  added support for multiple rtmp uris
+ *      2008-XX-XX: initial version 
+ *                  Never published, ran on nopan.web2sms.nl
  */
   
  /*
@@ -163,10 +166,8 @@
             $this->processChannelName();
             $request =  $this->ustreamAPIHost;
             $format = 'php';   // this can be xml, json, html, or php. Keep it on php unless you like to hack.
-            $args = 'subject=channel';
-            $args .= '&uid='.$this->__get('_CHANNEL');
-            $args .= '&command=getInfo';
-            $args .= '&key='.$this->_APIKEY;
+            $args = 'subject=channel&uid='.$this->__get('_CHANNEL');
+            $args .= '&command=getInfo&key='.$this->__get('_APIKEY');
             $session = curl_init($request.'/'.$format.'?'.$args);
             curl_setopt($session, CURLOPT_HEADER, false);
             curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
@@ -226,9 +227,8 @@
             {
                 // Stream uses a single stream server.
                 // Return rtmpdump command and variabless
-                // streamName is always "streams/live"
                 $this->rtmpData = array();
-                preg_match('~(((http|ftp|https|rtmp):/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/\+#!]*[\w\-\@?^=%&\+#])?~',$this->amfData->_value['fmsUrl'],$m);
+                $m = $this->extractRTMPURI($this->amfData->_value['fmsUrl']);
                 $this->rtmpData[0] = array($this->amfData->_value['fmsUrl'],$this->amfData->_value['streamName'],substr($m[5],1));
             }
             elseif(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['cdnUrl']))
@@ -241,7 +241,7 @@
                 $streamkeys = array_keys($this->amfData->_value['streamVersions']);
                 foreach($this->amfData->_value['streamVersions'][$streamkeys[0]]['streamVersionCdn'] as $cdn)
                 {
-                    preg_match('~(((http|ftp|https|rtmp):/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/\+#!]*[\w\-\@?^=%&\+#])?~',$cdn['cdnStreamUrl'],$m);
+                    $m = $this->extractRTMPURI($cdn['cdnStreamUrl']);
                     $this->rtmpData[] = array($cdn['cdnStreamUrl'],$cdn['cdnStreamName'],substr($m[5],1));
                 }
             }
@@ -254,6 +254,12 @@
                 var_dump($this->status,$this->amfData);
                 var_dump("UNKNOWN ERROR");
             }
+        }
+        
+        function extractRTMPURI($uri)
+        {
+            preg_match('~(((http|ftp|https|rtmp):/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/\+#!]*[\w\-\@?^=%&\+#])?~',$uri,$m);
+            return $m;
         }
         
         function getEmbedSWF(){

@@ -5,11 +5,29 @@ PHP code to generate a rtmpdump command with all required parameters to rip Ustr
 
 Usage:
 
-    Coming Soon
+    The easiest way to test this class is by downloading this project, place it somewhere in
+    your www/public_html folder and run index.php.
 
 Todo:
 
-    Coming Soon
+    Add logging
+    Add better error handling
+    Add caching support (flat-file or database ((My)SQL(ite)))
+    Improve URI handling
+    Add code to get latest Flash version for RTMPDump command
+    Add update script
+        
+Changelog
+
+    2012-11-06: improved URI handling. Now works with full URIs also
+    2012-11-05: first commit to GitHub
+                replaced getters and setters with magic methods
+    2012-07-XX: first public version
+                rewrote major parts for OOP approach
+                updated getRTMP to support ustream's new amf format
+                added support for multiple rtmp uris
+    2008-XX-XX: initial version 
+                Never published, ran on nopan.web2sms.nl
 
 Legal notice:
 
