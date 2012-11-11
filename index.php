@@ -46,13 +46,20 @@
                 //  $rip->setChannel('dj-kentai-jcore-hardcore-mix');
                 //$rip->setChannel($_POST['channel']);
                 $data = $rip->getRTMPCommand();
+                if(is_array($data)){
             ?>
             Found <?php echo count($data);?> streams. Please try the bellow command(s):<br><br>
             <?
-                foreach($data as $command)
-                {
-                    echo $command."<br><br>";
-                };
+                    foreach($data as $command)
+                    {
+                        echo $command."<br><br>";
+                    };
+                }else{
+                    ?>
+                    Click on the link below to download the video. (hint: use a download manager to download faster by using multiple connections)<br><br>
+                    <a href="<?=$data?>">Download video</a> <small><?=$data?></small>
+                    <?
+                }
             ?>
             <? }else{ ?>
             This is a small test. Please write the channel URI and press submit (or enter, whatever floats your boat).<br>
