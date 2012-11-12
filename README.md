@@ -3,6 +3,11 @@ PHPUstreamRip
 
 PHP code to generate a rtmpdump command with all required parameters to rip Ustream streams.
 
+Demo:
+
+    Visit http://tools.yu-go.eu/phpustreamrip/ to see the the latest working code.
+    This page will be updated with each commit.
+
 Usage:
 
     The easiest way to test this class is by downloading this project, place it somewhere in
@@ -19,6 +24,8 @@ Todo:
         
 Changelog
 
+    2012-11-12: added support for recorded videos.
+                improved URI handling.
     2012-11-06: improved URI handling. Now works with full URIs also
     2012-11-05: first commit to GitHub
                 replaced getters and setters with magic methods
