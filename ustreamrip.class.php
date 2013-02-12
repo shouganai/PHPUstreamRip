@@ -11,13 +11,15 @@
 *  
 * @name Ustreamrip
 * @package Ustreamrip
-* @author PBX_g33k <info@yu-go.eu>
+* @author PBX_g33k <phpripper@yu-go.eu>
+* @author Shouganai <git@shou.gan.ai>
 * @version 0.2.1
 * @todo Add logging
 * @todo Add better error handling
 * @todo Add caching support (flat-file or database ((My)SQL(ite)))
 *  
 * History: 
+*      2013-02-12: transferred ownership to shouganai on GitHub.
 *      2012-11-12: added support for recorded videos.
 *                  improved URI handling.
 *      2012-11-06: improved URI handling. Now works with full URIs also
