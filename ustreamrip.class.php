@@ -236,7 +236,30 @@
             $this->amfData = $this->amfData[0];
             $this->status = $this->amfData->_value['status'];
 
-            if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['fmsUrl']))
+                        if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['cdnUrl']))
+            {
+                if ($this->amfData->_value['streamVersions'])
+                {
+                    // Stream uses CDN to stream to clients
+                    // Start for loop iterating available providers (akamai, level3, etc)
+                    // and return rtmpdump command and variables for each stream.
+                    // NOTE: each server uses a seperate streamName, algorithm unknown as of now.
+                
+                    $streamkeys = array_keys($this->amfData->_value['streamVersions']);
+                    foreach($this->amfData->_value['streamVersions'][$streamkeys[0]]['streamVersionCdn'] as $cdn)
+                    {
+                        $m = $this->extractRTMPURI($cdn['cdnStreamUrl']);
+                        $this->rtmpData[] = array($cdn['cdnStreamUrl'],$cdn['cdnStreamName'],substr($m[5],1));
+                    }
+                }
+                else
+                {
+                    // 2012-12-22, simple fmsUrl like cdn stream
+                    $m = $this->extractRTMPURI($this->amfData->_value['cdnUrl']);
+                    $this->rtmpData[] = array($this->amfData->_value['cdnUrl'],$this->amfData->_value['streamName'],substr($m[5],1));
+                }
+            }
+            elseif(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['fmsUrl']))
             {
                 // Stream uses a single stream server.
                 // Return rtmpdump command and variabless
@@ -244,28 +267,9 @@
                 $m = $this->extractRTMPURI($this->amfData->_value['fmsUrl']);
                 $this->rtmpData[0] = array($this->amfData->_value['fmsUrl'],$this->amfData->_value['streamName'],substr($m[5],1));
             }
-            elseif(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['cdnUrl']))
-            {
-                // Stream uses CDN to stream to clients
-                // Start for loop iterating available providers (akamai, level3, etc)
-                // and return rtmpdump command and variables for each stream.
-                // NOTE: each server uses a seperate streamName, algorithm unknown as of now.
-                
-                $streamkeys = array_keys($this->amfData->_value['streamVersions']);
-                foreach($this->amfData->_value['streamVersions'][$streamkeys[0]]['streamVersionCdn'] as $cdn)
-                {
-                    $m = $this->extractRTMPURI($cdn['cdnStreamUrl']);
-                    $this->rtmpData[] = array($cdn['cdnStreamUrl'],$cdn['cdnStreamName'],substr($m[5],1));
-                }
-            }
             elseif($this->status == "offline")
             {
                 var_dump($this->__get('_CHANNEL'),"CHANNEL OFFLINE!!!");
-            }
-            else
-            {
-                var_dump($this->status,$this->amfData);
-                var_dump("UNKNOWN ERROR");
             }
         }
         
