@@ -238,7 +238,7 @@
 
             if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['cdnUrl']))
             {
-                if ($this->amfData->_value['streamVersions'])
+                if (isset($this->amfData->_value['streamVersions']))
                 {
                     // Stream uses CDN to stream to clients
                     // Start for loop iterating available providers (akamai, level3, etc)
@@ -255,8 +255,9 @@
                 else
                 {
                     // 2012-12-22, simple fmsUrl like cdn stream
+                    $this->rtmpData = array();
                     $m = $this->extractRTMPURI($this->amfData->_value['cdnUrl']);
-                    $this->rtmpData[] = array($this->amfData->_value['cdnUrl'],$this->amfData->_value['streamName'],substr($m[5],1));
+                    $this->rtmpData[0] = array($this->amfData->_value['cdnUrl'],$this->amfData->_value['streamName'],substr($m[5],1));
                 }
             }
             elseif(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['fmsUrl']))
