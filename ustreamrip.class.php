@@ -1,47 +1,47 @@
 <?php
-/**
-* 
-* The class ustreamrip.class.php 
-*  
-* The Ustreamrip class provides an easy method to get commands for recording 
-* live ustream webcasts. Do note that the legality of this tool differs per
-* state/country and situation. Please consult your local professionals if
-* your allowed (by law) to use this tool. In my case it's allowed for 
-* personal usage.
-*  
-* @name Ustreamrip
-* @package Ustreamrip
-* @author PBX_g33k <phpripper@yu-go.eu>
-* @author Shouganai <git@shou.gan.ai>
-* @version 0.2.1
-* @todo Add logging
-* @todo Add better error handling
-* @todo Add caching support (flat-file or database ((My)SQL(ite)))
-*  
-* History: 
-*      2013-02-12: transferred ownership to shouganai on GitHub.
-*      2012-11-12: added support for recorded videos.
-*                  improved URI handling.
-*      2012-11-06: improved URI handling. Now works with full URIs also
-*      2012-11-05: first commit to GitHub
-*                  replaced getters and setters with magic methods
-*      2012-07-XX: first public version
-*                  rewrote major parts for OOP approach
-*                  updated getRTMP to support ustream's new amf format
-*                  added support for multiple rtmp uris
-*      2008-XX-XX: initial version 
-*                  Never published, ran on nopan.web2sms.nl
-*/
-  
- /*
- *
- *  NOTE:
- * 
- *  This is a rewrite of a code i've written over two years ago. A lot of 
- *  the code is a mindfuck for me and i'm deeply ashamed of writing it.
- *  I don't know what some of the code does, so i've marked these functions
- *  as is. I will look into the code later and decypher it :3
- */
+    /**
+    * 
+    * The class ustreamrip.class.php 
+    *  
+    * The Ustreamrip class provides an easy method to get commands for recording 
+    * live ustream webcasts. Do note that the legality of this tool differs per
+    * state/country and situation. Please consult your local professionals if
+    * your allowed (by law) to use this tool. In my case it's allowed for 
+    * personal usage.
+    *  
+    * @name Ustreamrip
+    * @package Ustreamrip
+    * @author PBX_g33k <phpripper@yu-go.eu>
+    * @author Shouganai <git@shou.gan.ai>
+    * @version 0.2.1
+    * @todo Add logging
+    * @todo Add better error handling
+    * @todo Add caching support (flat-file or database ((My)SQL(ite)))
+    *  
+    * History: 
+    *      2013-02-12: transferred ownership to shouganai on GitHub.
+    *      2012-11-12: added support for recorded videos.
+    *                  improved URI handling.
+    *      2012-11-06: improved URI handling. Now works with full URIs also
+    *      2012-11-05: first commit to GitHub
+    *                  replaced getters and setters with magic methods
+    *      2012-07-XX: first public version
+    *                  rewrote major parts for OOP approach
+    *                  updated getRTMP to support ustream's new amf format
+    *                  added support for multiple rtmp uris
+    *      2008-XX-XX: initial version 
+    *                  Never published, ran on nopan.web2sms.nl
+    */
+
+    /*
+    *
+    *  NOTE:
+    * 
+    *  This is a rewrite of a code i've written over two years ago. A lot of 
+    *  the code is a mindfuck for me and i'm deeply ashamed of writing it.
+    *  I don't know what some of the code does, so i've marked these functions
+    *  as is. I will look into the code later and decypher it :3
+    */
     class Ustreamrip
     {   
         var $_APIKEY;
@@ -64,7 +64,7 @@
         var $command;
         var $status;
         var $channelType; // 0 = Livestream, 1 = Recorded
-        
+
         function Ustreamrip($properties = array())
         {
             foreach($properties as $propertyKey => $propertyValue)
@@ -72,7 +72,7 @@
                 $this->__set($propertyKey,$propertyValue);
             }
         }
-        
+
         function __get($property)
         {
             if(property_exists($this,$property))
@@ -80,7 +80,7 @@
                 return $this->$property;
             }
         }
-        
+
         function __set($property,$value)
         {
             if(property_exists($this,$property))
@@ -88,14 +88,14 @@
                 $this->$property = $value;
             }
         }
-        
+
         function Init()
         {
             $this->__set('rtmpDumpPath', ''); 
             $this->__set('outputPath', 'c:/dump/');
             //$this->__set('_APIKEY', '') //Insert API-Key you can get from ustream here. http://developer.ustream.tv/
         }
-        
+
         /**
         * Used to get all required files from ustream.
         * 
@@ -169,7 +169,7 @@
 
             return $ret;
         }
-         
+
         function getuStreamInfo(){
             $this->getChannelType();
             if($this->channelType == 1)
@@ -194,13 +194,13 @@
             $this->__set('userID', $resultsArray['results']['user']['id']);
             $this->__set('userID', $resultsArray['results']['status']);
         }
-        
+
         function getChannelStatus()
         {
             return $this->status;
             //NOT YET IMPLEMENTED
         }
-        
+
         function getuStreamcron($channels=array()){
             //UNUSED FUNCTION LEFT FROM REWRITE. STILL DONT KNOW WHAT THIS EXACTLY DOES :3
             $req=null;
@@ -236,7 +236,7 @@
             $this->amfData = $this->amfData[0];
             $this->status = $this->amfData->_value['status'];
 
-                        if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['cdnUrl']))
+            if(($this->status == "online" || $this->status == "live") && isset($this->amfData->_value['cdnUrl']))
             {
                 if ($this->amfData->_value['streamVersions'])
                 {
@@ -244,7 +244,7 @@
                     // Start for loop iterating available providers (akamai, level3, etc)
                     // and return rtmpdump command and variables for each stream.
                     // NOTE: each server uses a seperate streamName, algorithm unknown as of now.
-                
+
                     $streamkeys = array_keys($this->amfData->_value['streamVersions']);
                     foreach($this->amfData->_value['streamVersions'][$streamkeys[0]]['streamVersionCdn'] as $cdn)
                     {
@@ -272,20 +272,20 @@
                 var_dump($this->__get('_CHANNEL'),"CHANNEL OFFLINE!!!");
             }
         }
-        
+
         function extractRTMPURI($uri)
         {
             preg_match('~(((http|ftp|https|rtmp):/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/\+#!]*[\w\-\@?^=%&\+#])?~',$uri,$m);
             return $m;
         }
-        
+
         function getEmbedSWF(){
             $source = $this->http_request('GET',$this->ustreamHost,80,$this->ustreamPath.$this->_CHANNEL);
             preg_match("(http://cdn(\d+)\.ustream\.tv/swf/(\d+)/viewer\.(\d+)\.swf)",$source,$return);
             $return['p'] = TRUE;
             return($return);
         }
-        
+
         function getProtectedRTMP($chan){
             $source = $this->http_request('GET',$this->ustreamCDNHost,80,$this->ustreamCDNPath.$chan.".amf");
             preg_match("(rtmp://[^/]+/ustream/test)",$source,$return); #gets RTMP URI
@@ -298,22 +298,22 @@
                 $this->rtmpData = $return;
             }
         }
-        
+
         function getRTMPCommand()
         {
             $this->getuStreamInfo();
-            
+
             if($this->channelType == 1)
                 return $this->getRecordedVideoUrl();
-            
+
             $this->getRTMP();
             $this->command = array();
             for($i=0;$i<count($this->rtmpData);$i++)
                 $this->command[] = $this->rtmpDumpPath."rtmpdump -v -r ".$this->rtmpData[$i][0]." -a \"".$this->rtmpData[$i][2]."\" -f \"WIN 11,0,1,152\" -y \"".$this->rtmpData[$i][1]."\" -s \"http://static-cdn1.ustream.tv/swf/live/vieweri.rsl:249.swf\" -o \"".$this->outpuPath.$this->_CHANNEL.".flv\"";
-            
+
             return $this->command;
         }
-        
+
         function getChannelType()
         {
             if(strpos($this->__get('_CHANNEL'),'recorded'))
@@ -321,7 +321,7 @@
             else
                 $this->__set('channelType',0); 
         }
-        
+
         function getVideoID()
         {
             $parts = explode('/',$this->__get('_CHANNEL'));
@@ -333,19 +333,19 @@
             else
                 return intval($chanid);
         }
-        
+
         function getRecordedVideoUrl()
         {
             return "http://{$this->recordedVideoHost}{$this->recordedVideoPath}{$this->getVideoID()}";
         }
-        
+
         function processChannelName()
         {
             $uris = explode('/',$this->__get('_CHANNEL'));
             $amount = count($uris);
             $this->__set('_CHANNEL',$uris[$amount-1]);
         }
-        
+
         function getRTMPCommandSingle(){
             $this->getRTMPCommand();
             return $this->command[0];
