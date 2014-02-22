@@ -33,7 +33,7 @@ Changelog
                 rewrote major parts for OOP approach
                 updated getRTMP to support ustream's new amf format
                 added support for multiple rtmp uris
-    2008-XX-XX: initial version 
+    2011-03-05: initial version 
                 Never published, ran on nopan.web2sms.nl
 
 Legal notice:
